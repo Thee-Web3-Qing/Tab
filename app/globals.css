@@ -45,3 +45,5 @@
 
 /* Clear Tab review must remain readable over the photo. */
 .closeSheet{color:var(--ink)}.closeSheet>.eyebrow{color:var(--muted)}.closeSheet>h2{color:var(--ink);margin:0 0 12px}.closeSheet>h2+ p{color:var(--muted);line-height:1.5}.closeSheet>.infoCard{color:var(--ink)}.closeSheet>.infoCard b{color:var(--ink)}.closeSheet>.infoCard p{color:var(--muted)}
+
+.closeSheet .primary.approvedWaiting{background:#2e6f5112;color:var(--green);border:1px solid #2e6f5138;opacity:1;cursor:default}

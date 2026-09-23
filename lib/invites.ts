@@ -1,0 +1,1 @@
+export function makeInviteCode(name:string){const head=name.replace(/[^a-z0-9]/gi,"").slice(0,4).toUpperCase().padEnd(4,"X");const tail=crypto.randomUUID().replace(/-/g,"").slice(0,4).toUpperCase();return head+"-"+tail}export function invitePath(code:string){return"/join/"+encodeURIComponent(code.toUpperCase())}

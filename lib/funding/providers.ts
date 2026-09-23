@@ -1,0 +1,1 @@
+export const FUNDING_PROVIDERS={KES:{id:"minisend",label:"M-Pesa",currency:"KES",enabled:true},NGN:{id:"minisend",label:"Naira",currency:"NGN",enabled:false},GHS:{id:"pending-ghs",label:"GHS funding",currency:"GHS",enabled:false}} as const;export function fundingProvider(currency:string){return FUNDING_PROVIDERS[currency as keyof typeof FUNDING_PROVIDERS]??null}

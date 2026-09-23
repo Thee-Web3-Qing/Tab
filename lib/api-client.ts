@@ -1,0 +1,1 @@
+export async function authedFetch(getAccessToken:()=>Promise<string|null>,input:string,init:RequestInit={}){const token=await getAccessToken();if(!token)throw new Error("Please sign in again");return fetch(input,{...init,headers:{"Content-Type":"application/json",Authorization:`Bearer ${token}`,...(init.headers||{})}})}

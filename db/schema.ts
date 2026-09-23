@@ -5,6 +5,7 @@ export const tabStatus=pgEnum("tab_status",["active","closing","locked","settlin
 export const memberStatus=pgEnum("member_status",["pending","active","inactive","removed"]);
 export const expenseStatus=pgEnum("expense_status",["active","disputed","void"]);
 export const approvalKind=pgEnum("approval_kind",["join","inactive","remove","close"]);
+export const fundingStatus=pgEnum("funding_status",["quoted","pending","completed","released","failed","expired"]);
 
 export const users=pgTable("users",{
  id:uuid("id").defaultRandom().primaryKey(), privyId:text("privy_id").unique(), name:text("name").notNull(),
@@ -53,7 +54,7 @@ export const claimStatus=pgEnum("claim_status",["draft","claiming","review","app
 export const receiptClaims=pgTable("receipt_claims",{
  id:uuid("id").defaultRandom().primaryKey(),tabId:uuid("tab_id").references(()=>tabs.id,{onDelete:"cascade"}).notNull(),
  payerId:uuid("payer_id").references(()=>users.id).notNull(),merchant:text("merchant"),receiptImageUrl:text("receipt_image_url"),
- currency:text("currency").notNull(),receiptTotal:numeric("receipt_total",{precision:18,scale:2}).notNull(),status:claimStatus("status").default("draft").notNull(),
+ currency:text("currency").notNull(),receiptTotal:numeric("receipt_total",{precision:18,scale:2}).notNull(),status:claimStatus("status").default("draft").notNull(),allocationVersion:integer("allocation_version").default(1).notNull(),
  createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(),finalizedAt:timestamp("finalized_at",{withTimezone:true})
 });
 export const receiptItems=pgTable("receipt_items",{
@@ -67,6 +68,9 @@ export const itemClaims=pgTable("item_claims",{
  shareQuantity:numeric("share_quantity",{precision:10,scale:3}).default("1").notNull(),claimedAt:timestamp("claimed_at",{withTimezone:true}).defaultNow().notNull()
 },t=>[primaryKey({columns:[t.itemId,t.userId]})]);
 export const receiptApprovals=pgTable("receipt_approvals",{
- claimId:uuid("claim_id").references(()=>receiptClaims.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id).notNull(),
+ claimId:uuid("claim_id").references(()=>receiptClaims.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id).notNull(),allocationVersion:integer("allocation_version").notNull(),
  approvedAt:timestamp("approved_at",{withTimezone:true}).defaultNow().notNull()
 },t=>[primaryKey({columns:[t.claimId,t.userId]})]);
+export const fundingOrders=pgTable("funding_orders",{
+ id:uuid("id").defaultRandom().primaryKey(),userId:uuid("user_id").references(()=>users.id).notNull(),provider:text("provider").notNull(),providerOrderId:text("provider_order_id").unique(),externalReference:text("external_reference").unique().notNull(),currency:text("currency").notNull(),amountLocal:numeric("amount_local",{precision:18,scale:2}),feeLocal:numeric("fee_local",{precision:18,scale:2}),amountUsdc:numeric("amount_usdc",{precision:18,scale:6}).notNull(),rate:numeric("rate",{precision:24,scale:10}),destinationAddress:text("destination_address").notNull(),releaseChain:text("release_chain").notNull().default("base"),status:fundingStatus("status").default("quoted").notNull(),receiptNumber:text("receipt_number"),releaseTxHash:text("release_tx_hash"),failureReason:text("failure_reason"),createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(),updatedAt:timestamp("updated_at",{withTimezone:true}).defaultNow().notNull()
+});

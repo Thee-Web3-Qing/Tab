@@ -4,7 +4,7 @@ export const splitMode=pgEnum("split_mode",["equal","percentage"]);
 export const tabStatus=pgEnum("tab_status",["active","closing","locked","settling","settled"]);
 export const memberStatus=pgEnum("member_status",["pending","active","inactive","removed"]);
 export const expenseStatus=pgEnum("expense_status",["active","disputed","void"]);
-export const approvalKind=pgEnum("approval_kind",["join","inactive","remove","close"]);
+export const approvalKind=pgEnum("approval_kind",["join","inactive","remove","close"]);\nexport const fundingStatus=pgEnum("funding_status",["quoted","pending","completed","released","failed","expired"]);
 
 export const users=pgTable("users",{
  id:uuid("id").defaultRandom().primaryKey(), privyId:text("privy_id").unique(), name:text("name").notNull(),
@@ -70,3 +70,6 @@ export const receiptApprovals=pgTable("receipt_approvals",{
  claimId:uuid("claim_id").references(()=>receiptClaims.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id).notNull(),allocationVersion:integer("allocation_version").notNull(),
  approvedAt:timestamp("approved_at",{withTimezone:true}).defaultNow().notNull()
 },t=>[primaryKey({columns:[t.claimId,t.userId]})]);
+export const fundingOrders=pgTable("funding_orders",{
+ id:uuid("id").defaultRandom().primaryKey(),userId:uuid("user_id").references(()=>users.id).notNull(),provider:text("provider").notNull(),providerOrderId:text("provider_order_id").unique(),externalReference:text("external_reference").unique().notNull(),currency:text("currency").notNull(),amountLocal:numeric("amount_local",{precision:18,scale:2}),feeLocal:numeric("fee_local",{precision:18,scale:2}),amountUsdc:numeric("amount_usdc",{precision:18,scale:6}).notNull(),rate:numeric("rate",{precision:24,scale:10}),destinationAddress:text("destination_address").notNull(),releaseChain:text("release_chain").notNull().default("base"),status:fundingStatus("status").default("quoted").notNull(),receiptNumber:text("receipt_number"),releaseTxHash:text("release_tx_hash"),failureReason:text("failure_reason"),createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(),updatedAt:timestamp("updated_at",{withTimezone:true}).defaultNow().notNull()
+});

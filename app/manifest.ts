@@ -1,0 +1,1 @@
+import type{MetadataRoute}from"next";export default function manifest():MetadataRoute.Manifest{return{name:"Tab",short_name:"Tab",description:"Shared spending, simplified.",start_url:"/",display:"standalone",background_color:"#F3EFE6",theme_color:"#F3EFE6",icons:[{src:"/assets/tab-wordmark-primary.png",sizes:"any",type:"image/png"}]}}

@@ -1,0 +1,1 @@
+import Link from "next/link";export function AppNav({active}:{active:"home"|"activity"|"me"}){return <nav className="nav"><Link className={active==="home"?"active":""} href="/">⌂<br/>Home</Link><Link className={active==="activity"?"active":""} href="/activity">◷<br/>Activity</Link><Link className={active==="me"?"active":""} href="/me">☺<br/>Me</Link></nav>}

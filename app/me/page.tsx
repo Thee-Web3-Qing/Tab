@@ -1,0 +1,1 @@
+export default function Me(){return <main className="shell"><div className="brand">tab.</div><h1>Your Tab</h1><div className="card"><b>Qing</b><p className="muted">Preferred currency · NGN</p><span className="pill">Wallet setup stays invisible</span></div></main>}

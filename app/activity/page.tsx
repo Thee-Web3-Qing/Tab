@@ -1,0 +1,1 @@
+export default function Activity(){return <main className="shell"><div className="brand">tab.</div><h1>Activity</h1><p className="muted">Your payments, joins, approvals and settlements will live here.</p></main>}

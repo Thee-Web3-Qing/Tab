@@ -1,0 +1,1 @@
+import{parsePastedReceipt}from"../lib/paste-receipt";const r=parsePastedReceipt("SHOPRITE\nCoca Cola 1.5L ₦900\n2 x Water ₦1,000\nDove Soap ₦1,800\nTOTAL ₦3,700");if(r.items.length!==3)throw new Error("items");if(r.items[1].quantity!==2)throw new Error("quantity");if(r.statedTotal!==3700)throw new Error("total");

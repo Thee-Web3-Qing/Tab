@@ -1,1 +1,1 @@
-export function BrandMark({light=false}:{light?:boolean}){return <span className={"wordmark"+(light?" wordmarkLight":"")} aria-label="Tab"><span className="wordT">T</span><span className="wordA">a</span><i/><span className="wordB">b</span></span>}
+export function BrandMark({light=false}:{light?:boolean}){return <span className={"brandAsset"+(light?" brandAssetLight":"")} aria-label="Tab"><img src="/logo.png" alt="Tab" onError={e=>{e.currentTarget.style.display="none";e.currentTarget.nextElementSibling?.removeAttribute("hidden")}}/><span hidden>Tab</span></span>}

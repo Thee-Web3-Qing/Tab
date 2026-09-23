@@ -1,1 +1,1 @@
-export function BrandMark({light=false}:{light?:boolean}){return <span className={"brandAsset"+(light?" brandAssetLight":"")} aria-label="Tab"><img src="/assets/tab-wordmark-primary.png" alt="Tab"/></span>}
+export function BrandMark({light=false}:{light?:boolean}){return <span className={"brandAsset"+(light?" brandAssetLight":"")} aria-label="Tab" style={{background:"transparent",border:0,boxShadow:"none"}}><img src="/assets/tab-wordmark-primary.png" alt="Tab"/></span>}

@@ -49,3 +49,24 @@ export const settlements=pgTable("settlements",{
  toUserId:uuid("to_user_id").references(()=>users.id).notNull(), amountUsd:numeric("amount_usd",{precision:18,scale:6}).notNull(),
  amountUsdc:numeric("amount_usdc",{precision:18,scale:6}).notNull(), arcTxHash:text("arc_tx_hash"), settledAt:timestamp("settled_at",{withTimezone:true})
 });
+export const claimStatus=pgEnum("claim_status",["draft","claiming","review","approved","cancelled"]);
+export const receiptClaims=pgTable("receipt_claims",{
+ id:uuid("id").defaultRandom().primaryKey(),tabId:uuid("tab_id").references(()=>tabs.id,{onDelete:"cascade"}).notNull(),
+ payerId:uuid("payer_id").references(()=>users.id).notNull(),merchant:text("merchant"),receiptImageUrl:text("receipt_image_url"),
+ currency:text("currency").notNull(),receiptTotal:numeric("receipt_total",{precision:18,scale:2}).notNull(),status:claimStatus("status").default("draft").notNull(),
+ createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(),finalizedAt:timestamp("finalized_at",{withTimezone:true})
+});
+export const receiptItems=pgTable("receipt_items",{
+ id:uuid("id").defaultRandom().primaryKey(),claimId:uuid("claim_id").references(()=>receiptClaims.id,{onDelete:"cascade"}).notNull(),
+ label:text("label").notNull(),quantity:numeric("quantity",{precision:10,scale:3}).default("1").notNull(),
+ unitPrice:numeric("unit_price",{precision:18,scale:2}),lineTotal:numeric("line_total",{precision:18,scale:2}).notNull(),
+ extractionConfidence:numeric("extraction_confidence",{precision:5,scale:4}),position:integer("position").notNull()
+});
+export const itemClaims=pgTable("item_claims",{
+ itemId:uuid("item_id").references(()=>receiptItems.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id).notNull(),
+ shareQuantity:numeric("share_quantity",{precision:10,scale:3}).default("1").notNull(),claimedAt:timestamp("claimed_at",{withTimezone:true}).defaultNow().notNull()
+},t=>[primaryKey({columns:[t.itemId,t.userId]})]);
+export const receiptApprovals=pgTable("receipt_approvals",{
+ claimId:uuid("claim_id").references(()=>receiptClaims.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id).notNull(),
+ approvedAt:timestamp("approved_at",{withTimezone:true}).defaultNow().notNull()
+},t=>[primaryKey({columns:[t.claimId,t.userId]})]);

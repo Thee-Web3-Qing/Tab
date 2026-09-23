@@ -1,0 +1,1 @@
+import{z}from"zod";const server=z.object({DATABASE_URL:z.string().min(1),PRIVY_APP_SECRET:z.string().min(1)});export function serverEnv(){return server.parse({DATABASE_URL:process.env.DATABASE_URL,PRIVY_APP_SECRET:process.env.PRIVY_APP_SECRET})}

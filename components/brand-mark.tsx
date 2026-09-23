@@ -1,1 +1,1 @@
-"use client";export function BrandMark({light=false}:{light?:boolean}){return <span className={"brandAsset"+(light?" brandAssetLight":"")} aria-label="Tab"><img src="/logo.png" alt="Tab" onError={e=>{e.currentTarget.style.display="none";e.currentTarget.nextElementSibling?.removeAttribute("hidden")}}/><span hidden>Tab</span></span>}
+export function BrandMark({light=false}:{light?:boolean}){return <span className={"brandAsset"+(light?" brandAssetLight":"")} aria-label="Tab"><img src="/assets/tab-wordmark-primary.png" alt="Tab"/></span>}

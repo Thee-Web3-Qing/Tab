@@ -47,3 +47,5 @@
 .closeSheet{color:var(--ink)}.closeSheet>.eyebrow{color:var(--muted)}.closeSheet>h2{color:var(--ink);margin:0 0 12px}.closeSheet>h2+ p{color:var(--muted);line-height:1.5}.closeSheet>.infoCard{color:var(--ink)}.closeSheet>.infoCard b{color:var(--ink)}.closeSheet>.infoCard p{color:var(--muted)}
 
 .closeSheet .primary.approvedWaiting{background:#2e6f5112;color:var(--green);border:1px solid #2e6f5138;opacity:1;cursor:default}
+
+.settlementHistory{margin-top:22px}.settlementHistory>.profileEditHead{margin-bottom:8px}.historyRow{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 0;border-bottom:1px solid var(--line)}.historyRow div{display:grid;gap:4px}.historyRow small,.historyEmpty{color:var(--muted)}.historyRow a{color:var(--green);font-weight:800;text-decoration:none;white-space:nowrap}

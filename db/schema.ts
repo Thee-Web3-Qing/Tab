@@ -53,7 +53,7 @@ export const claimStatus=pgEnum("claim_status",["draft","claiming","review","app
 export const receiptClaims=pgTable("receipt_claims",{
  id:uuid("id").defaultRandom().primaryKey(),tabId:uuid("tab_id").references(()=>tabs.id,{onDelete:"cascade"}).notNull(),
  payerId:uuid("payer_id").references(()=>users.id).notNull(),merchant:text("merchant"),receiptImageUrl:text("receipt_image_url"),
- currency:text("currency").notNull(),receiptTotal:numeric("receipt_total",{precision:18,scale:2}).notNull(),status:claimStatus("status").default("draft").notNull(),
+ currency:text("currency").notNull(),receiptTotal:numeric("receipt_total",{precision:18,scale:2}).notNull(),status:claimStatus("status").default("draft").notNull(),allocationVersion:integer("allocation_version").default(1).notNull(),
  createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(),finalizedAt:timestamp("finalized_at",{withTimezone:true})
 });
 export const receiptItems=pgTable("receipt_items",{
@@ -67,6 +67,6 @@ export const itemClaims=pgTable("item_claims",{
  shareQuantity:numeric("share_quantity",{precision:10,scale:3}).default("1").notNull(),claimedAt:timestamp("claimed_at",{withTimezone:true}).defaultNow().notNull()
 },t=>[primaryKey({columns:[t.itemId,t.userId]})]);
 export const receiptApprovals=pgTable("receipt_approvals",{
- claimId:uuid("claim_id").references(()=>receiptClaims.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id).notNull(),
+ claimId:uuid("claim_id").references(()=>receiptClaims.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id).notNull(),allocationVersion:integer("allocation_version").notNull(),
  approvedAt:timestamp("approved_at",{withTimezone:true}).defaultNow().notNull()
 },t=>[primaryKey({columns:[t.claimId,t.userId]})]);

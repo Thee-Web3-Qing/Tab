@@ -4,7 +4,8 @@ export const splitMode=pgEnum("split_mode",["equal","percentage"]);
 export const tabStatus=pgEnum("tab_status",["active","closing","locked","settling","settled"]);
 export const memberStatus=pgEnum("member_status",["pending","active","inactive","removed"]);
 export const expenseStatus=pgEnum("expense_status",["active","disputed","void"]);
-export const approvalKind=pgEnum("approval_kind",["join","inactive","remove","close"]);\nexport const fundingStatus=pgEnum("funding_status",["quoted","pending","completed","released","failed","expired"]);
+export const approvalKind=pgEnum("approval_kind",["join","inactive","remove","close"]);
+export const fundingStatus=pgEnum("funding_status",["quoted","pending","completed","released","failed","expired"]);
 
 export const users=pgTable("users",{
  id:uuid("id").defaultRandom().primaryKey(), privyId:text("privy_id").unique(), name:text("name").notNull(),

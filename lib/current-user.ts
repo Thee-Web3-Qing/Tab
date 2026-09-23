@@ -1,0 +1,1 @@
+import {eq} from "drizzle-orm";import {users} from "@/db/schema";import {getDb} from "@/lib/db";import {requirePrivyUserId} from "@/lib/auth";export async function currentUser(){const privyId=await requirePrivyUserId();const [user]=await getDb().select().from(users).where(eq(users.privyId,privyId)).limit(1);if(!user)throw new Error("Sync your account first");return user}

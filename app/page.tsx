@@ -1,1 +1,23 @@
-import Link from"next/link";import{AppNav}from"@/components/app-nav";export default function Home(){return <main className="shell home"><header className="homeHead"><div><small>Good evening,</small><h1>Qing 👋</h1></div><div className="avatar photo">Q</div></header><p className="eyebrow">Here are your tabs</p><div className="filters"><span className="selected">All</span><span>Friends</span><span>Home</span><span>Work</span></div><section className="tabCards"><Link href="/tab" className="tabCard weekend"><div className="cardShade"/><div className="tabCardCopy"><h2>Weekend Out 🍸</h2><p>5 people · 4 expenses</p><small>You owe</small><strong>$120.00</strong><div className="faces">Q M T <i>+2</i></div></div></Link><Link href="/tab" className="tabCard homeCover"><div className="cardShade"/><div className="tabCardCopy"><h2>Our Home 🏠</h2><p>2 people · Monthly</p><strong>You're all settled!</strong><div className="faces">Q M</div></div></Link><Link href="/tab" className="tabCard project"><div className="cardShade"/><div className="tabCardCopy"><h2>Project Lagos ✎</h2><p>4 people · In progress</p></div></Link></section><Link href="/create" className="fab">+</Link><AppNav active="home"/></main>}
+"use client";
+import Link from "next/link";
+import {useEffect,useState} from "react";
+import {usePrivy} from "@privy-io/react-auth";
+import {AppNav} from "@/components/app-nav";
+
+type TabRow={id:string;name:string;emoji?:string|null;status:string;membership:string};
+
+export default function Home(){
+ const {getAccessToken,user}=usePrivy();
+ const [tabs,setTabs]=useState<TabRow[]>([]);
+ const [loading,setLoading]=useState(true);
+ const name=(user?.google?.name||user?.email?.address?.split("@")[0]||"there").split(" ")[0];
+ useEffect(()=>{(async()=>{try{const token=await getAccessToken();if(!token)return;const res=await fetch("/api/tabs",{headers:{Authorization:`Bearer ${token}`}});if(res.ok){const data=await res.json();setTabs(data.tabs??[])}}finally{setLoading(false)}})()},[getAccessToken]);
+ return <main className="shell home">
+  <header className="homeHead"><div><small>Welcome back,</small><h1>{name} 👋</h1></div><div className="avatar photo">{name[0]?.toUpperCase()}</div></header>
+  <p className="eyebrow">Your tabs</p>
+  {loading?<div className="infoCard"><b>Loading your Tabs…</b></div>:tabs.length===0?
+   <section className="emptyState"><h2>Nothing to settle yet.</h2><p>Start a Tab the next time you’re spending together.</p><Link className="primary" href="/create">+ Create a Tab</Link><Link className="secondary" href="/join">Join a Tab</Link></section>:
+   <section className="tabCards">{tabs.map(tab=><Link key={tab.id} href={`/tab?id=${tab.id}`} className="tabCard"><div className="tabCardCopy"><h2>{tab.name} {tab.emoji??""}</h2><p>{tab.status}</p><small>{tab.membership==="active"?"You're in this Tab":tab.membership}</small></div></Link>)}</section>}
+  <Link href="/create" className="fab">+</Link><AppNav active="home"/>
+ </main>
+}

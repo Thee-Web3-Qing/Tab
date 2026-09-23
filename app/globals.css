@@ -27,3 +27,6 @@
 
 /* Alerts header: reserve separate lanes for the wordmark and bell. */
 .notificationPage .heroGlass{display:grid;grid-template-columns:minmax(0,1fr) 56px;grid-template-areas:"brand bell" "title title" "copy copy";column-gap:16px;align-items:start}.notificationPage .heroGlass>.brandAsset{grid-area:brand;margin:0;width:max-content;max-width:calc(100% - 8px);overflow:hidden}.notificationPage .heroGlass>.brandAsset img{width:82px;max-width:82px;height:auto}.notificationPage .heroGlass>span{grid-area:bell;position:static!important;justify-self:end}.notificationPage .heroGlass h1{grid-area:title;max-width:none!important;padding-right:0!important}.notificationPage .heroGlass p{grid-area:copy}@media(max-width:600px){.notificationPage .heroGlass{grid-template-columns:minmax(0,1fr) 54px;row-gap:0}.notificationPage .heroGlass h1{margin-top:66px}.notificationPage .heroGlass>.brandAsset img{width:76px;max-width:76px}}
+
+/* Persistent three-item app navigation */
+.nav.navThree{grid-template-columns:repeat(3,1fr);position:fixed!important;left:50%!important;right:auto!important;bottom:max(14px,env(safe-area-inset-bottom))!important;transform:translateX(-50%);z-index:1000;margin:0!important}.shell:has(.nav.navThree),.notificationPage:has(.nav.navThree){padding-bottom:96px}

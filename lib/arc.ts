@@ -1,6 +1,7 @@
 import{defineChain,encodeFunctionData,maxUint256,parseUnits}from"viem";
-export const ARC_TESTNET=defineChain({id:5042002,name:"Arc Testnet",nativeCurrency:{name:"USDC",symbol:"USDC",decimals:18},rpcUrls:{default:{http:["https://rpc.testnet.arc.network"]}}});
 export const ARC_USDC="0x3600000000000000000000000000000000000000" as const;
+export const ARC_TESTNET=defineChain({id:5042002,name:"Arc Testnet",nativeCurrency:{name:"USDC",symbol:"USDC",decimals:18},rpcUrls:{default:{http:["https://rpc.testnet.arc.io"]}},blockExplorers:{default:{name:"Arc Explorer",url:"https://explorer.testnet.arc.io"}}});
+export const ARC_MAINNET=defineChain({id:5042,name:"Arc Mainnet",nativeCurrency:{name:"USDC",symbol:"USDC",decimals:18},rpcUrls:{default:{http:["https://rpc.mainnet.arc.io"]}},blockExplorers:{default:{name:"Arc Explorer",url:"https://explorer.arc.io"}}});
 export const USDC_TRANSFER_ABI=[{type:"function",name:"transfer",stateMutability:"nonpayable",inputs:[{name:"to",type:"address"},{name:"value",type:"uint256"}],outputs:[{name:"",type:"bool"}]}]as const;
 export const USDC_ALLOWANCE_ABI=[{type:"function",name:"allowance",stateMutability:"view",inputs:[{name:"owner",type:"address"},{name:"spender",type:"address"}],outputs:[{name:"",type:"uint256"}]}]as const;
 export const USDC_APPROVE_ABI=[{type:"function",name:"approve",stateMutability:"nonpayable",inputs:[{name:"spender",type:"address"},{name:"value",type:"uint256"}],outputs:[{name:"",type:"bool"}]}]as const;

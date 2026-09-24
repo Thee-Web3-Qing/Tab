@@ -82,3 +82,7 @@
 
 /* Batch settlement checkout */
 .batchPay{margin:18px 0;padding:18px;border-radius:22px;background:#ffffff12;border:1px solid #ffffff20;text-align:left}.batchPay h2{font-family:Fraunces,Georgia,serif;font-size:25px;margin:4px 0 10px;color:var(--paper)}.batchPay .feeBreakdown{margin:12px 0}.batchPay .settleBtn{margin:12px 0 8px}.batchPay>small{display:block;color:#bdb8b0;font-size:9px;line-height:1.45}.batchIncluded{display:block;color:var(--green)!important;font-size:9px;margin-top:4px;font-weight:700}
+
+
+/* One-time smart-contract authorization */
+.contractAuth{margin-top:10px;padding:13px;border-radius:15px;background:#2e6f5110;border:1px solid #2e6f5128;text-align:left}.contractAuth>b{font-size:11px;color:var(--green)}.contractAuth p{font-size:9px!important;line-height:1.5;color:var(--muted)!important;margin:5px 0 8px}.contractAuth .settleBtn{margin:8px 0 0}

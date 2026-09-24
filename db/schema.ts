@@ -48,7 +48,7 @@ export const approvals=pgTable("approvals",{
 export const settlements=pgTable("settlements",{
  id:uuid("id").defaultRandom().primaryKey(), tabId:uuid("tab_id").references(()=>tabs.id).notNull(), fromUserId:uuid("from_user_id").references(()=>users.id).notNull(),
  toUserId:uuid("to_user_id").references(()=>users.id).notNull(), amountUsd:numeric("amount_usd",{precision:18,scale:6}).notNull(),
- amountUsdc:numeric("amount_usdc",{precision:18,scale:6}).notNull(), arcTxHash:text("arc_tx_hash"), feeTxHash:text("fee_tx_hash"), settledAt:timestamp("settled_at",{withTimezone:true})
+ amountUsdc:numeric("amount_usdc",{precision:18,scale:6}).notNull(), arcTxHash:text("arc_tx_hash"), settledAt:timestamp("settled_at",{withTimezone:true})
 });
 export const claimStatus=pgEnum("claim_status",["draft","claiming","review","approved","cancelled"]);
 export const receiptClaims=pgTable("receipt_claims",{

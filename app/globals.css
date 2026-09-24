@@ -78,3 +78,7 @@
 
 /* Settlement fee + buffer breakdown */
 .feeBreakdown{display:grid;grid-template-columns:1fr auto;gap:8px 12px;margin:12px 0;padding:13px;border-radius:15px;background:#fffdf8;border:1px solid #17171410}.feeBreakdown span{font-size:10px;color:var(--muted);text-align:left}.feeBreakdown strong{font-size:10px;text-align:right;color:var(--ink)}.feeBreakdown span:nth-last-child(2),.feeBreakdown strong:last-child{padding-top:8px;border-top:1px solid #17171410;font-weight:800}
+
+
+/* Batch settlement checkout */
+.batchPay{margin:18px 0;padding:18px;border-radius:22px;background:#ffffff12;border:1px solid #ffffff20;text-align:left}.batchPay h2{font-family:Fraunces,Georgia,serif;font-size:25px;margin:4px 0 10px;color:var(--paper)}.batchPay .feeBreakdown{margin:12px 0}.batchPay .settleBtn{margin:12px 0 8px}.batchPay>small{display:block;color:#bdb8b0;font-size:9px;line-height:1.45}.batchIncluded{display:block;color:var(--green)!important;font-size:9px;margin-top:4px;font-weight:700}

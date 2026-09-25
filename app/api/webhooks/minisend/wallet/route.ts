@@ -23,7 +23,7 @@ async function ensureWalletTables(){
    created_at timestamptz NOT NULL DEFAULT now(),
    updated_at timestamptz NOT NULL DEFAULT now()
  )`;
- await sql`CREATE INDEX IF NOT EXISTS tab_wallets_user_idx ON tab_wallets(user_id)`;
+ await sql`CREATE UNIQUE INDEX IF NOT EXISTS tab_wallets_user_unique ON tab_wallets(user_id)`;
  await sql`CREATE TABLE IF NOT EXISTS wallet_deposits(
    id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
    user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
@@ -60,7 +60,7 @@ export async function POST(req:Request){
  let wallet=(await db.select().from(tabWallets).where(eq(tabWallets.walletRef,walletRef)).limit(1))[0];
  let userId=wallet?.userId;
  if(!userId){
-   const m=walletRef.match(/^tab-([0-9a-fA-F-]{36})-/);
+   const m=walletRef.match(/^tab-([0-9a-fA-F-]{36})(?:-|$)/);
    if(m){const u=(await db.select({id:users.id}).from(users).where(eq(users.id,m[1])).limit(1))[0];if(u)userId=u.id}
  }
  if(!userId)return NextResponse.json({ok:true,received:true,event,ignored:true,reason:"walletRef is not linked to a Tab user"});

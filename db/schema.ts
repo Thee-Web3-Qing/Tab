@@ -78,7 +78,7 @@ export const fundingOrders=pgTable("funding_orders",{
 
 export const tabWallets=pgTable("tab_wallets",{
  id:uuid("id").defaultRandom().primaryKey(),
- userId:uuid("user_id").references(()=>users.id,{onDelete:"cascade"}).notNull(),
+ userId:uuid("user_id").references(()=>users.id,{onDelete:"cascade"}).notNull().unique(),
  provider:text("provider").notNull().default("minisend"),
  providerWalletId:text("provider_wallet_id"),
  walletRef:text("wallet_ref").unique().notNull(),

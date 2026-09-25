@@ -74,3 +74,32 @@ export const receiptApprovals=pgTable("receipt_approvals",{
 export const fundingOrders=pgTable("funding_orders",{
  id:uuid("id").defaultRandom().primaryKey(),userId:uuid("user_id").references(()=>users.id).notNull(),provider:text("provider").notNull(),providerOrderId:text("provider_order_id").unique(),externalReference:text("external_reference").unique().notNull(),currency:text("currency").notNull(),amountLocal:numeric("amount_local",{precision:18,scale:2}),feeLocal:numeric("fee_local",{precision:18,scale:2}),amountUsdc:numeric("amount_usdc",{precision:18,scale:6}).notNull(),rate:numeric("rate",{precision:24,scale:10}),destinationAddress:text("destination_address").notNull(),releaseChain:text("release_chain").notNull().default("base"),status:fundingStatus("status").default("quoted").notNull(),receiptNumber:text("receipt_number"),releaseTxHash:text("release_tx_hash"),failureReason:text("failure_reason"),createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(),updatedAt:timestamp("updated_at",{withTimezone:true}).defaultNow().notNull()
 });
+
+
+export const tabWallets=pgTable("tab_wallets",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ userId:uuid("user_id").references(()=>users.id,{onDelete:"cascade"}).notNull(),
+ provider:text("provider").notNull().default("minisend"),
+ providerWalletId:text("provider_wallet_id"),
+ walletRef:text("wallet_ref").unique().notNull(),
+ chain:text("chain").notNull(),
+ address:text("address").notNull(),
+ createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(),
+ updatedAt:timestamp("updated_at",{withTimezone:true}).defaultNow().notNull()
+});
+
+export const walletDeposits=pgTable("wallet_deposits",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ userId:uuid("user_id").references(()=>users.id,{onDelete:"cascade"}).notNull(),
+ walletId:uuid("wallet_id").references(()=>tabWallets.id,{onDelete:"set null"}),
+ providerEventId:text("provider_event_id").unique().notNull(),
+ walletRef:text("wallet_ref").notNull(),
+ chain:text("chain").notNull(),
+ token:text("token").notNull().default("USDC"),
+ amount:numeric("amount",{precision:18,scale:6}).notNull(),
+ txHash:text("tx_hash"),
+ status:text("status").notNull().default("received"),
+ rawPayload:text("raw_payload"),
+ receivedAt:timestamp("received_at",{withTimezone:true}).defaultNow().notNull(),
+ createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull()
+});

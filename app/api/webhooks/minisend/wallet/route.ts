@@ -1,4 +1,4 @@
-import{createHash,createHmac,timingSafeEqual}from"crypto";import{NextResponse}from"next/server";import{eq}from"drizzle-orm";import{getDb}from"@/lib/db";import{tabWallets,users,walletDeposits}from"@/db/schema";
+import{createHash,createHmac,timingSafeEqual}from"crypto";import{NextResponse}from"next/server";import{eq}from"drizzle-orm";import{neon}from"@neondatabase/serverless";import{getDb}from"@/lib/db";import{tabWallets,users,walletDeposits}from"@/db/schema";
 
 export const runtime="nodejs";
 
@@ -8,11 +8,47 @@ function string(v:any){return v==null?null:String(v)}
 function parseWalletRef(p:any){return string(first(p?.walletRef,p?.wallet_ref,p?.wallet?.walletRef,p?.wallet?.wallet_ref,p?.data?.walletRef,p?.data?.wallet_ref,p?.data?.wallet?.walletRef,p?.data?.wallet?.wallet_ref,p?.deposit?.walletRef,p?.deposit?.wallet_ref))}
 function parseAmount(p:any){const v=first(p?.amount,p?.amount_usdc,p?.deposit?.amount,p?.deposit?.amount_usdc,p?.data?.amount,p?.data?.amount_usdc);if(v==null)return null;const n=Number(v);return Number.isFinite(n)&&n>=0?n.toFixed(6):null}
 
+async function ensureWalletTables(){
+ const url=process.env.DATABASE_URL;
+ if(!url)throw new Error("DATABASE_URL is not configured");
+ const sql=neon(url);
+ await sql`CREATE TABLE IF NOT EXISTS tab_wallets(
+   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+   provider text NOT NULL DEFAULT 'minisend',
+   provider_wallet_id text,
+   wallet_ref text NOT NULL UNIQUE,
+   chain text NOT NULL,
+   address text NOT NULL,
+   created_at timestamptz NOT NULL DEFAULT now(),
+   updated_at timestamptz NOT NULL DEFAULT now()
+ )`;
+ await sql`CREATE INDEX IF NOT EXISTS tab_wallets_user_idx ON tab_wallets(user_id)`;
+ await sql`CREATE TABLE IF NOT EXISTS wallet_deposits(
+   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+   user_id uuid NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+   wallet_id uuid REFERENCES tab_wallets(id) ON DELETE SET NULL,
+   provider_event_id text NOT NULL UNIQUE,
+   wallet_ref text NOT NULL,
+   chain text NOT NULL,
+   token text NOT NULL DEFAULT 'USDC',
+   amount numeric(18,6) NOT NULL,
+   tx_hash text,
+   status text NOT NULL DEFAULT 'received',
+   raw_payload text,
+   received_at timestamptz NOT NULL DEFAULT now(),
+   created_at timestamptz NOT NULL DEFAULT now()
+ )`;
+ await sql`CREATE INDEX IF NOT EXISTS wallet_deposits_user_idx ON wallet_deposits(user_id)`;
+ await sql`CREATE INDEX IF NOT EXISTS wallet_deposits_wallet_ref_idx ON wallet_deposits(wallet_ref)`;
+}
+
 export async function POST(req:Request){
  const raw=await req.text(),sig=req.headers.get("x-minisend-signature")||"";
  if(!process.env.MINISEND_WEBHOOK_SECRET)return NextResponse.json({error:"MiniSend webhook secret is not configured"},{status:503});
  if(!valid(raw,sig))return NextResponse.json({error:"Invalid MiniSend signature"},{status:401});
  let p:any;try{p=JSON.parse(raw)}catch{return NextResponse.json({error:"Invalid JSON payload"},{status:400})}
+ await ensureWalletTables();
  const event=String(first(p?.event,p?.type,p?.event_type,"unknown"));
  const isDeposit=event==="wallet.deposit.received"||event.includes("deposit");
  if(!isDeposit)return NextResponse.json({ok:true,received:true,event,ignored:true});

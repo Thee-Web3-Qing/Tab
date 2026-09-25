@@ -17,7 +17,7 @@ export const tabs=pgTable("tabs",{
  creatorId:uuid("creator_id").references(()=>users.id).notNull(), splitMode:splitMode("split_mode").notNull(),
  status:tabStatus("status").default("active").notNull(), ledgerVersion:integer("ledger_version").default(1).notNull(),
  inviteCode:text("invite_code").unique().notNull(), inviteGeneration:integer("invite_generation").default(1).notNull(),
- createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(), lockedAt:timestamp("locked_at",{withTimezone:true})
+ createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull(), lockedAt:timestamp("locked_at",{withTimezone:true}), recurrence:text("recurrence")
 });
 export const members=pgTable("tab_members",{
  tabId:uuid("tab_id").references(()=>tabs.id,{onDelete:"cascade"}).notNull(), userId:uuid("user_id").references(()=>users.id).notNull(),
@@ -102,4 +102,15 @@ export const walletDeposits=pgTable("wallet_deposits",{
  rawPayload:text("raw_payload"),
  receivedAt:timestamp("received_at",{withTimezone:true}).defaultNow().notNull(),
  createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull()
+});
+
+
+export const savedGroups=pgTable("saved_groups",{
+ id:uuid("id").defaultRandom().primaryKey(),ownerId:uuid("owner_id").references(()=>users.id,{onDelete:"cascade"}).notNull(),name:text("name").notNull(),createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull()
+});
+export const savedGroupMembers=pgTable("saved_group_members",{
+ groupId:uuid("group_id").references(()=>savedGroups.id,{onDelete:"cascade"}).notNull(),userId:uuid("user_id").references(()=>users.id,{onDelete:"cascade"}).notNull()
+},t=>[primaryKey({columns:[t.groupId,t.userId]})]);
+export const paymentReminders=pgTable("payment_reminders",{
+ id:uuid("id").defaultRandom().primaryKey(),tabId:uuid("tab_id").references(()=>tabs.id,{onDelete:"cascade"}).notNull(),senderId:uuid("sender_id").references(()=>users.id,{onDelete:"cascade"}).notNull(),debtorId:uuid("debtor_id").references(()=>users.id,{onDelete:"cascade"}).notNull(),createdAt:timestamp("created_at",{withTimezone:true}).defaultNow().notNull()
 });

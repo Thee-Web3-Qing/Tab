@@ -110,3 +110,7 @@
 
 /* Dual-wallet migration: MiniSend primary + Privy legacy */
 .minisendWalletCard{margin-bottom:12px;background:linear-gradient(145deg,#234f3c,#173629)!important}.minisendWalletCard .walletTop em{background:#8ed1af20;color:#b9efd1}.walletNetworkPills{display:flex;gap:7px;flex-wrap:wrap;margin:10px 0}.walletNetworkPills span{padding:7px 9px;border-radius:999px;background:#ffffff10;border:1px solid #ffffff16;color:#f4efe7;font-size:8px;font-weight:800}.minisendWalletCopy{margin:10px 0 14px;color:#d4cec5;font-size:9px;line-height:1.55}.legacyWalletCard{margin-top:0}.legacyWalletCard .walletTop em{white-space:nowrap}
+
+
+/* Provider-agnostic Tab Wallet */
+.tabWalletCard{margin-bottom:12px;background:linear-gradient(145deg,#234f3c,#173629)!important}.tabWalletCard .walletTop em{background:#8ed1af20;color:#b9efd1}.tabWalletActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0 6px}.tabWalletActions button{border:1px solid #ffffff18;border-radius:14px;padding:12px;background:#ffffff10;color:#fff;font-weight:800}.tabWalletActions button:first-child{background:#fff;color:#171714}.tabWalletActions button:disabled{opacity:.45}.depositRoutes{display:grid;gap:8px;margin-top:10px}.depositRoutes button{border:1px solid #ffffff15;border-radius:14px;background:#ffffff08;color:#fff;padding:12px;text-align:left;display:grid;gap:3px}.depositRoutes b{font-size:10px}.depositRoutes small{font-size:8px;line-height:1.4;color:#bdb7ae}.legacyWalletCard{opacity:.96}

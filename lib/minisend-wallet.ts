@@ -8,3 +8,5 @@ export function transferMinimum(chain:MinisendTransferChain){if(chain==="ETH")re
 export function parseTransferChain(value:unknown):MinisendTransferChain{const chain=String(value||"BASE").toUpperCase();if(!CHAINS.has(chain))throw new Error("Unsupported transfer network");return chain as MinisendTransferChain}
 export async function createWalletTransfer(input:{from:string;to:string;chain:MinisendTransferChain;token:"USDC"|"USDT";amount:number;idempotencyKey:string}):Promise<{transfer:MinisendTransfer}>{return await request("/api/v1/transfers",{method:"POST",body:JSON.stringify({from:input.from,to:input.to,chain:input.chain,token:input.token,amount:input.amount,idempotency_key:input.idempotencyKey})})}
 export async function getWalletTransfer(id:string):Promise<{transfer:MinisendTransfer}>{return await request("/api/v1/transfers/"+encodeURIComponent(id))}
+
+export async function listWalletTransfers(limit=100,offset=0):Promise<{transfers:MinisendTransfer[];total?:number;limit?:number;offset?:number}>{return await request(`/api/v1/transfers?limit=${Math.min(Math.max(limit,1),100)}&offset=${Math.max(offset,0)}`)}

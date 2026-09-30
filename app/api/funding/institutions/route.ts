@@ -1,0 +1,2 @@
+import{NextResponse}from"next/server";import{currentUser}from"@/lib/current-user";import{listNgnInstitutions}from"@/lib/funding/minisend";
+export async function GET(){try{await currentUser();const data=await listNgnInstitutions();return NextResponse.json(data,{headers:{"Cache-Control":"no-store"}})}catch(e){return NextResponse.json({error:e instanceof Error?e.message:"Unable to load banks"},{status:400})}}

@@ -1,0 +1,21 @@
+import{neon}from"@neondatabase/serverless";
+let ready:Promise<void>|null=null;
+export function ensureFundingOrders(){if(ready)return ready;ready=(async()=>{const url=process.env.DATABASE_URL;if(!url)throw new Error("DATABASE_URL is not configured");const sql=neon(url);
+await sql`DO $$ BEGIN CREATE TYPE funding_status AS ENUM ('quoted','pending','completed','released','failed','expired'); EXCEPTION WHEN duplicate_object THEN null; END $$`;
+await sql`CREATE TABLE IF NOT EXISTS funding_orders(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),user_id uuid NOT NULL REFERENCES users(id),provider text NOT NULL,provider_order_id text UNIQUE,external_reference text UNIQUE NOT NULL,currency text NOT NULL,amount_local numeric(18,2),fee_local numeric(18,2),amount_usdc numeric(18,6) NOT NULL,rate numeric(24,10),destination_address text NOT NULL,release_chain text NOT NULL DEFAULT 'base',status funding_status NOT NULL DEFAULT 'quoted',receipt_number text,release_tx_hash text,failure_reason text,created_at timestamptz NOT NULL DEFAULT now(),updated_at timestamptz NOT NULL DEFAULT now())`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS provider_order_id text`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS external_reference text`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS currency text`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS amount_local numeric(18,2)`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS fee_local numeric(18,2)`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS amount_usdc numeric(18,6)`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS rate numeric(24,10)`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS destination_address text`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS release_chain text DEFAULT 'base'`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS status funding_status DEFAULT 'quoted'`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS receipt_number text`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS release_tx_hash text`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS failure_reason text`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS created_at timestamptz DEFAULT now()`;
+await sql`ALTER TABLE funding_orders ADD COLUMN IF NOT EXISTS updated_at timestamptz DEFAULT now()`;
+})();return ready}

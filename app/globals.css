@@ -132,3 +132,19 @@
 
 /* Recurring Tab + saved group selectors */
 .featureChoices{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 18px}.featureChoices button{appearance:none;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:16px;padding:12px 14px;min-height:44px;display:grid;gap:2px;text-align:left;font:inherit;font-weight:750;cursor:pointer;transition:transform .14s ease,background .14s ease,border-color .14s ease,box-shadow .14s ease}.featureChoices button:hover{border-color:#2e6f5145}.featureChoices button:active{transform:scale(.985)}.featureChoices button.on{background:#2e6f5114;border-color:#2e6f5180;color:var(--green);box-shadow:inset 0 0 0 1px #2e6f5126}.featureChoices button.on::after{content:"Selected";font-size:7px;line-height:1;text-transform:uppercase;letter-spacing:.07em;color:var(--green);opacity:.8;margin-top:2px}.featureChoices button b{font-size:10px}.featureChoices button small{font-size:8px;color:var(--muted);font-weight:600}.featureChoices.compact{display:grid;grid-template-columns:repeat(3,1fr)}.featureChoices.compact button{place-items:center;text-align:center;min-height:50px}.featureChoices.compact button.on{background:var(--green);border-color:var(--green);color:#fff;box-shadow:0 7px 18px #2e6f5128}.featureChoices.compact button.on::after{color:#dff3e8}.featureChoices button:focus-visible{outline:2px solid var(--green);outline-offset:2px}@media(max-width:360px){.featureChoices.compact{grid-template-columns:1fr}.featureChoices.compact button{place-items:start;text-align:left}}
+
+.walletModal{background:linear-gradient(180deg,#f8f5ed 0%,#f1ecdf 100%);border:1px solid rgba(255,255,255,.85)}
+.walletModalHead{padding-bottom:14px;border-bottom:1px solid var(--line)}
+.walletModal .walletRouteList{gap:12px}
+.walletModal .walletRouteList>button{padding:16px;border-radius:20px;box-shadow:0 8px 24px rgba(23,23,20,.04);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+.walletModal .walletRouteList>button:active{transform:scale(.985)}
+.walletModal .walletRouteList>button>span{width:42px;height:42px;border-radius:14px;font-weight:800}
+.walletModal .walletRouteList b{font-size:12px}
+.walletModal .walletRouteList small{font-size:9.5px;line-height:1.35}
+.walletModal .walletRouteDetail label{display:grid;gap:6px;font-size:10px;font-weight:800}
+.walletModal .walletRouteDetail input,.walletModal .walletRouteDetail select{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:13px 14px;font:inherit;color:var(--ink);outline:none}
+.walletModal .walletRouteDetail input:focus,.walletModal .walletRouteDetail select:focus{border-color:#2e6f5170;box-shadow:0 0 0 3px #2e6f5112}
+.walletModal .walletRoutePrimary{min-height:50px;border-radius:16px;font-size:12px}
+.walletModal .baseFundingDisclosure{padding:13px;border-radius:16px}
+.walletModal .fundingAddressCard{padding:14px;border-radius:18px}
+@media(max-width:420px){.walletModal{width:calc(100vw - 28px);padding:18px;border-radius:26px}.walletModalHead h2{font-size:25px}.walletModal .walletRouteDetail>b{font-size:22px}}

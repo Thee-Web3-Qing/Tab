@@ -5,7 +5,7 @@ import{useSendTransaction,useWallets}from"@privy-io/react-auth";
 import{createPublicClient,encodeDeployData,http}from"viem";
 import{ARC_MAINNET,ARC_USDC}from"@/lib/arc";
 
-const FEE_WALLET="0x2A6515d8E093B5186D92d0f3A8082484C2AC6F62" as const;
+const FEE_WALLET="0x5204deaf171dbf7bf6590db9409b6b6c64dc4eea" as const;
 
 export default function MainnetSettlementDeployer(){
  const{wallets}=useWallets(),{sendTransaction}=useSendTransaction();

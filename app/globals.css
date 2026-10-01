@@ -181,3 +181,5 @@
 
 /* Keep app navigation pinned to the viewport on mobile Safari */
 .nav{position:fixed!important;left:50%!important;right:auto!important;bottom:max(10px,env(safe-area-inset-bottom))!important;transform:translateX(-50%)!important;z-index:1200!important;will-change:transform}.shell{padding-bottom:calc(96px + env(safe-area-inset-bottom))}
+
+.settlementBalances.single{grid-template-columns:1fr}

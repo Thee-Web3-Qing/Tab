@@ -1,35 +1,56 @@
 "use client";
 import Link from"next/link";
-import{useEffect,useMemo,useState}from"react";
-import{usePrivy,useSendTransaction,useWallets}from"@privy-io/react-auth";
-import{createPublicClient,encodeDeployData,formatUnits,http}from"viem";
+import{useEffect,useState}from"react";
+import{createPublicClient,createWalletClient,custom,formatUnits,http}from"viem";
 import{ARC_MAINNET,ARC_USDC}from"@/lib/arc";
 
 const FEE_WALLET="0x5204deaf171dbf7bf6590db9409b6b6c64dc4eea" as const;
 const client=createPublicClient({chain:ARC_MAINNET,transport:http("https://rpc.mainnet.arc.io")});
 
 export default function MainnetSettlementDeployer(){
- const{wallets}=useWallets(),{getAccessToken}=usePrivy(),{sendTransaction}=useSendTransaction();
- const[busy,setBusy]=useState(false),[error,setError]=useState(""),[hash,setHash]=useState(""),[contract,setContract]=useState(""),[gasBalance,setGasBalance]=useState<number|null>(null),[tabWallet,setTabWallet]=useState("");
- const deployer=useMemo(()=>wallets.find(w=>w.walletClientType==="privy")||wallets[0],[wallets]);
- useEffect(()=>{if(!deployer?.address)return;let live=true;void(async()=>{try{const b=await client.getBalance({address:deployer.address as `0x${string}`});if(live)setGasBalance(Number(formatUnits(b,18)))}catch{if(live)setGasBalance(null)}try{const t=await getAccessToken(),r=await fetch("/api/wallet/minisend",{headers:{Authorization:"Bearer "+t}}),j=await r.json();if(r.ok&&live)setTabWallet(j.wallets?.[0]?.address||"")}catch{}})();return()=>{live=false}},[deployer?.address,getAccessToken]);
+ const[address,setAddress]=useState<`0x${string}`|null>(null),[gasBalance,setGasBalance]=useState<number|null>(null),[busy,setBusy]=useState(false),[error,setError]=useState(""),[hash,setHash]=useState(""),[contract,setContract]=useState("");
+
+ async function refreshBalance(a:`0x${string}`){
+  try{const b=await client.getBalance({address:a});setGasBalance(Number(formatUnits(b,18)))}catch{setGasBalance(null)}
+ }
+
+ async function connect(){
+  setError("");
+  try{
+   const provider=(window as any).ethereum;
+   if(!provider)throw new Error("No EVM wallet was found in this browser. Open this page inside MetaMask or another wallet browser.");
+   try{await provider.request({method:"wallet_switchEthereumChain",params:[{chainId:"0x13b2"}]})}
+   catch(e:any){
+    if(e?.code!==4902)throw e;
+    await provider.request({method:"wallet_addEthereumChain",params:[{chainId:"0x13b2",chainName:"Arc Mainnet",nativeCurrency:{name:"USDC",symbol:"USDC",decimals:18},rpcUrls:["https://rpc.mainnet.arc.io"],blockExplorerUrls:["https://explorer.arc.io"]}]});
+   }
+   const accounts=await provider.request({method:"eth_requestAccounts"});
+   const a=String(accounts?.[0]||"") as `0x${string}`;
+   if(!/^0x[a-fA-F0-9]{40}$/.test(a))throw new Error("Wallet did not return a valid address.");
+   setAddress(a);await refreshBalance(a);
+  }catch(e){setError(e instanceof Error?e.message:"Could not connect wallet")}
+ }
+
+ useEffect(()=>{void(async()=>{const provider=(window as any).ethereum;if(!provider)return;try{const accounts=await provider.request({method:"eth_accounts"});const a=String(accounts?.[0]||"") as `0x${string}`;if(/^0x[a-fA-F0-9]{40}$/.test(a)){setAddress(a);await refreshBalance(a)}}catch{}})()},[]);
+
  async function deploy(){
   setBusy(true);setError("");setHash("");setContract("");
   try{
-   const wallet=deployer;
-   if(!wallet)throw new Error("Your deployment wallet is not ready.");
-   if((gasBalance??0)<=0)throw new Error("Fund the deployment wallet shown below with Arc Mainnet USDC for gas first.");
+   const provider=(window as any).ethereum;
+   if(!provider||!address)throw new Error("Connect your deployment wallet first.");
+   if((gasBalance??0)<=0)throw new Error("Fund this wallet with Arc Mainnet USDC for gas first.");
    const r=await fetch("/generated/tab-settlement.json",{cache:"no-store"}),artifact=await r.json();
    if(!r.ok||!artifact?.bytecode||!artifact?.abi)throw new Error("Settlement contract artifact is unavailable.");
-   const data=encodeDeployData({abi:artifact.abi,bytecode:artifact.bytecode,args:[ARC_USDC,FEE_WALLET]});
-   const sent=await sendTransaction({data,chainId:5042} as any,{address:wallet.address});
-   setHash(sent.hash);
-   const receipt=await client.waitForTransactionReceipt({hash:sent.hash as `0x${string}`,confirmations:1});
+   const walletClient=createWalletClient({account:address,chain:ARC_MAINNET,transport:custom(provider)});
+   const tx=await walletClient.deployContract({abi:artifact.abi,bytecode:artifact.bytecode,args:[ARC_USDC,FEE_WALLET],account:address});
+   setHash(tx);
+   const receipt=await client.waitForTransactionReceipt({hash:tx,confirmations:1});
    if(receipt.status!=="success"||!receipt.contractAddress)throw new Error("Deployment did not return a contract address.");
    setContract(receipt.contractAddress);
   }catch(e){setError(e instanceof Error?e.message:"Deployment failed")}finally{setBusy(false)}
  }
+
  async function copy(v:string){await navigator.clipboard.writeText(v)}
- const same=!!deployer?.address&&!!tabWallet&&deployer.address.toLowerCase()===tabWallet.toLowerCase();
- return <main className="deploySettlement"><Link href="/me" className="heroBack">‹</Link><span className="deployBadge">Arc Mainnet</span><h1>Deploy TabSettlement</h1><p>This deploys the production settlement contract. The fee wallet is immutable after deployment.</p><section className="deployCard"><div><span>Network</span><b>Arc Mainnet · Chain 5042</b></div><div><span>USDC</span><code>{ARC_USDC}</code></div><div><span>Tab fee wallet</span><code>{FEE_WALLET}</code></div><div><span>Fee model</span><b>0.5% base · 0.03 USDC floor · 3% max</b></div></section><section className="deployWallet"><small>Deployment wallet</small><b>{deployer?.address||"Loading…"}</b>{deployer?.address&&<button onClick={()=>copy(deployer.address)}>Copy address</button>}<p>Arc gas balance: {gasBalance==null?"—":gasBalance.toFixed(6)} USDC</p>{tabWallet&&!same&&<p>Your Tab Wallet balance is held at a different MiniSend address ({tabWallet.slice(0,6)}…{tabWallet.slice(-4)}). That balance does not automatically fund this browser deployment wallet.</p>}</section>{!contract?<button className="primary" disabled={busy||!deployer||gasBalance==null||gasBalance<=0} onClick={deploy}>{busy?"Deploying…":gasBalance!=null&&gasBalance<=0?"Fund deployment wallet first":"Deploy Mainnet contract"}</button>:<section className="deploySuccess"><span>Deployment successful</span><h2>{contract}</h2><button onClick={()=>copy(contract)}>Copy contract address</button><p>Send me this CA and I’ll wire it into production settlement.</p></section>}{hash&&<section className="deployResult"><small>Deployment transaction</small><code>{hash}</code></section>}{error&&<p className="error">{error}</p>}<small className="deployWarning">Arc uses USDC as its native gas token. Deploy only once.</small></main>
+
+ return <main className="deploySettlement"><Link href="/me" className="heroBack">‹</Link><span className="deployBadge">Arc Mainnet</span><h1>Deploy TabSettlement</h1><p>Connect a dedicated external EVM wallet. This page no longer uses Privy.</p><section className="deployCard"><div><span>Network</span><b>Arc Mainnet · Chain 5042</b></div><div><span>USDC</span><code>{ARC_USDC}</code></div><div><span>Tab fee wallet</span><code>{FEE_WALLET}</code></div><div><span>Fee model</span><b>0.5% base · 0.03 USDC floor · 3% max</b></div></section><section className="deployWallet"><small>External deployment wallet</small><b>{address||"Not connected"}</b>{address&&<button onClick={()=>copy(address)}>Copy address</button>}<p>Arc gas balance: {gasBalance==null?"—":gasBalance.toFixed(6)} USDC</p></section>{!address?<button className="primary" onClick={connect}>Connect wallet</button>:!contract?<button className="primary" disabled={busy||gasBalance==null||gasBalance<=0} onClick={deploy}>{busy?"Deploying…":gasBalance!=null&&gasBalance<=0?"Fund this wallet first":"Deploy Mainnet contract"}</button>:<section className="deploySuccess"><span>Deployment successful</span><h2>{contract}</h2><button onClick={()=>copy(contract)}>Copy contract address</button><p>Send me this CA and I’ll wire it into production settlement.</p></section>}{hash&&<section className="deployResult"><small>Deployment transaction</small><code>{hash}</code></section>}{error&&<p className="error">{error}</p>}<small className="deployWarning">Arc uses USDC as its native gas token. Deploy only once.</small></main>
 }

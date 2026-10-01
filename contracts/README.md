@@ -34,6 +34,6 @@ Compile `contracts/TabSettlement.sol` with Solidity 0.8.24 and deploy separately
 Then set the deployed addresses in Vercel:
 
 - Testnet: `NEXT_PUBLIC_TAB_SETTLEMENT_CONTRACT=0x...`
-- Mainnet: `NEXT_PUBLIC_TAB_SETTLEMENT_CONTRACT_MAINNET=0x...`
+- Mainnet: `NEXT_PUBLIC_TAB_SETTLEMENT_CONTRACT_MAINNET=0x339267157fb31b3c1f00d49d14e39b54ce51dc54`
 
 A user authorizes the deployed settlement contract once. Each **Settle all** is one atomic transaction after authorization.

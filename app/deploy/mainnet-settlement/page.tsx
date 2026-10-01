@@ -4,7 +4,7 @@ import{useEffect,useState}from"react";
 import{createPublicClient,createWalletClient,custom,formatUnits,http}from"viem";
 import{ARC_MAINNET,ARC_USDC}from"@/lib/arc";
 
-const FEE_WALLET="0x5204deaf171dbf7bf6590db9409b6b6c64dc4eea" as const;
+const FEE_WALLET="0xc499E174895a4c2D7A2e12dcfacfCFB8F7CC701e" as const;
 const client=createPublicClient({chain:ARC_MAINNET,transport:http("https://rpc.mainnet.arc.io")});
 
 export default function MainnetSettlementDeployer(){
